@@ -10,10 +10,12 @@ const secret='login'
 app.use(cors());
 const mysql = require('mysql2');
 const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  database: 'mydb'
-});
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'mydb'
+  });
+  
 
 app.post('/register', jsonParser, function (req, res, next) {
     bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
