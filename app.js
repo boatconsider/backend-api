@@ -16,7 +16,10 @@ const connection = mysql.createConnection({
     database: 'mydb'
   });
   
-
+app.get('/' , (req,res)=>{
+  res.send('This is my Api running...')
+}
+)
 app.post('/register', jsonParser, function (req, res, next) {
     bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
         connection.execute(
@@ -75,6 +78,7 @@ app.post('/authen', jsonParser, function(req, res, next) {
   });
   
   
-app.listen(3000 , function () {
-  console.log('CORS-enabled web server listening on port 3000')
+app.listen(4000 , function () {
+  console.log('CORS-enabled web server listening on port 4000')
 })
+module.exports=app
