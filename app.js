@@ -27,10 +27,10 @@ app.post('/register', jsonParser, function (req, res, next) {
             [req.body.username, hash, req.body.fname, req.body.lname],
             function (err, results, fields) {
               if (err) {
-                res.json({ status: 'error', message: err });
+                res.json({ status: 'error', message :'register failed' });
                 return;
               }
-              res.json({ status: 'ok' });
+              res.json({ status: 'ok' ,message:'register success' });
             }
           );
         });
@@ -61,7 +61,8 @@ app.post('/authen', jsonParser, function(req, res, next) {
     const token = req.headers.authorization;
     const tokenValue = token ? token.split(' ')[1] : null;
     let decoded;
-    let status;
+   
+let status;
     let message;
     
     try {
