@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon app.js",
+    "build": "yarn"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
@@ -13,5 +14,8 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.13"
+  },
+  "engines": {
+    "node": ">=14.20.1"
   }
 }
