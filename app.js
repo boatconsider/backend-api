@@ -22,10 +22,16 @@ const connection = mysql.createConnection({
 });
 
   
-app.get('/' , (req,res)=>{
-  res.send('This is my Api running...')
-}
-)
+app.get('/sneakers', function (req, res, next) {
+connection.query(
+'SELECT * FROM `sneakers` ',
+  function(err, results, fields) {
+    res.json({results});
+    console.log(results); 
+    
+  }
+);
+})
 app.post('/register', jsonParser, function (req, res, next) {
     bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
         connection.execute(
