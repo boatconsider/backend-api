@@ -69,6 +69,23 @@ app.post('/login' ,jsonParser,function(req,res,next){
       );
 }
 )
+app.post('/rsmsdo', jsonParser, function (req, res, next) {
+  bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
+      connection.execute(
+          'INSERT INTO rsmsdo (name, passwordsell, problem, img) VALUES (?, ?, ?, ?)',
+          [req.body.name, hash, req.body.passwordsell, req.body.problem, req.body.img],
+          function (err, results, fields) {
+            if (err) {
+              res.json({ status: 'error', message :'ไม่สามารถส่งเรื่องได้' });
+              return;
+            }
+            res.json({ status: 'ok' ,message:'ส่งเรื่องเสร็จสิ้น' });
+          }
+        );
+      });
+      
+  });
+
 app.post('/authen', jsonParser, function(req, res, next) {
     const token = req.headers.authorization;
     const tokenValue = token ? token.split(' ')[1] : null;
