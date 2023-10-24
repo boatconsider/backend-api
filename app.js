@@ -70,27 +70,21 @@ app.post('/login' ,jsonParser,function(req,res,next){
 }
 )
 app.post('/rsmsdo', jsonParser, function (req, res, next) {
-  bcrypt.hash(req.body.passwordsell, saltRounds, function(err, hash) {
-    if (err) {
-      console.error('เกิดข้อผิดพลาดในการแฮชรหัสผ่าน: ' + err.message);
-      res.json({ status: 'error', message: 'ไม่สามารถส่งเรื่องได้' });
-      return;
-    }
-
-    connection.query(
+  bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
+    connection.execute(
       'INSERT INTO rsmsdo (name, passwordsell, problem, img) VALUES (?, ?, ?, ?)',
       [req.body.name, hash, req.body.problem, req.body.img],
       function (err, results, fields) {
         if (err) {
-          console.error('เกิดข้อผิดพลาดในการเพิ่มข้อมูลลงในฐานข้อมูล: ' + err.message);
-          res.json({ status: 'error', message: 'ไม่สามารถส่งเรื่องได้' });
+          res.json({ status: 'error', message: 'register failed' });
           return;
         }
-        res.json({ status: 'ok' ,message: 'ส่งเรื่องเสร็จสิ้น' });
+        res.json({ status: 'ok', message: 'register success' });
       }
     );
   });
 });
+
 
 
 app.post('/authen', jsonParser, function(req, res, next) {
