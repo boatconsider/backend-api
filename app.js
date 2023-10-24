@@ -71,18 +71,18 @@ app.post('/login' ,jsonParser,function(req,res,next){
 )
 app.post('/rsmsdo', jsonParser, function (req, res, next) {
   connection.execute(
-      'INSERT INTO rsmsdo (name, passwordsell, problem, img)  (?, ?, ?, ?)',
-      [req.body.name, hash, req.body.passwordsell, req.body.problem , req.body.img],
+      'INSERT INTO rsmsdo (name, passwordsell, problem, img) VALUES (?, ?, ?, ?)',
+      [req.body.name, req.body.passwordsell, req.body.problem, req.body.img],
       function (err, results, fields) {
         if (err) {
-          res.json({ status: 'error', message :'register failed' });
+          res.json({ status: 'error', message: 'register failed' });
           return;
         }
-        res.json({ status: 'ok' ,message:'register success' });
+        res.json({ status: 'ok', message: 'register success' });
       }
     );
-  
 });
+
 
 
 
