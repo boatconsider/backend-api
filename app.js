@@ -88,7 +88,7 @@ app.post('/rsmask', jsonParser, function (req, res, next) {
       [req.body.name, req.body.passwordsell, req.body.problem, req.body.img],
       function (err, results, fields) {
         if (err) {
-          res.json({ status: 'error', message: 'แจ้งปัญหาไม่สำเร็จ'});
+          res.json({ status: 'error', message: 'แจ้งปัญหาไม่สำเร็จ' });
           return;
         }
         res.json({ status: 'ok', message: 'แจ้งปัญหาสำเร็จ' });
