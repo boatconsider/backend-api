@@ -82,19 +82,7 @@ app.post('/rsmsdo', jsonParser, function (req, res, next) {
       }
     );
 });
-app.post('/rsmask', jsonParser, function (req, res, next) {
-  connection.execute(
-      'INSERT INTO rsmask (name, passwordsell, problem, img) VALUES (?, ?, ?, ?)',
-      [req.body.name, req.body.passwordsell, req.body.problem, req.body.img],
-      function (err, results, fields) {
-        if (err) {
-          res.json({ status: 'error', message: 'แจ้งปัญหาไม่สำเร็จ' });
-          return;
-        }
-        res.json({ status: 'ok', message: 'แจ้งปัญหาสำเร็จ' });
-      }
-    );
-});
+
 app.post('/rsmpdcdc', jsonParser, function (req, res, next) {
   connection.execute(
       'INSERT INTO rsmpdcdc (name, passwordsell, problem, img) VALUES (?, ?, ?, ?)',
@@ -122,7 +110,19 @@ app.post('/rsmvan', jsonParser, function (req, res, next) {
     );
 });
 
-
+app.post('/rsmaskmore', jsonParser, function (req, res, next) {
+  connection.execute(
+      'INSERT INTO rsmask (name, passwordsell, problem, img) VALUES (?, ?, ?, ?)',
+      [req.body.name, req.body.passwordsell, req.body.problem, req.body.img],
+      function (err, results, fields) {
+        if (err) {
+          res.json({ status: 'error', message: 'แจ้งปัญหาไม่สำเร็จ' });
+          return;
+        }
+        res.json({ status: 'ok', message: 'แจ้งปัญหาสำเร็จ' });
+      }
+    );
+});
 
 app.post('/authen', jsonParser, function(req, res, next) {
     const token = req.headers.authorization;
