@@ -69,19 +69,36 @@ app.post('/login' ,jsonParser,function(req,res,next){
       );
 }
 )
-app.post('/rsmask', jsonParser, function (req, res, next) {
-  connection.execute(
-      'INSERT INTO rsmask (name, passwordsell, problem, img) VALUES (?, ?, ?, ?)',
-      [req.body.name, req.body.passwordsell, req.body.problem, req.body.img],
-      function (err, results, fields) {
-        if (err) {
-          res.json({ status: 'error', message: 'แจ้งปัญหาไม่สำเร็จ'});
-          return;
-        }
-        res.json({ status: 'ok', message: 'แจ้งปัญหาสำเร็จ' });
+app.get('/getsdo', function (req, res, next) {
+  connection.query(
+  'SELECT * FROM `rsmsdo` ',
+    function(err, results, fields) {
+      res.json({results});
+      console.log(results); 
+      
+    }
+  );
+  })
+  app.get('/getpdcdc', function (req, res, next) {
+    connection.query(
+    'SELECT * FROM `rsmpdcdc` ',
+      function(err, results, fields) {
+        res.json({results});
+        console.log(results); 
+        
       }
     );
-});
+    })
+    app.get('/getvan', function (req, res, next) {
+      connection.query(
+      'SELECT * FROM `rsmvan` ',
+        function(err, results, fields) {
+          res.json({results});
+          console.log(results); 
+          
+        }
+      );
+      })
 app.post('/rsmsdo', jsonParser, function (req, res, next) {
   connection.execute(
       'INSERT INTO rsmsdo (name, passwordsell, problem, img) VALUES (?, ?, ?, ?)',
