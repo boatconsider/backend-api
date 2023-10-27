@@ -69,32 +69,16 @@ app.post('/login' ,jsonParser,function(req,res,next){
       );
 }
 )
-// สร้างฟังก์ชันสำหรับแปลง Blob เป็น URL
-function blobToDataURL(blob, callback) {
-  const reader = new FileReader();
-  reader.onload = function(event) {
-    callback(event.target.result);
-  };
-  reader.readAsDataURL(blob);
-}
-
-// ดึงข้อมูล Blob จาก Backend (ใช้ fetch หรือ Axios หรือวิธีอื่น)
-fetch('/getsdo')
-  .then(response => response.blob())
-  .then(blob => {
-    // เรียกฟังก์ชันสำหรับแปลง Blob เป็น URL
-    blobToDataURL(blob, function(dataURL) {
-      // dataURL คือ URL ของภาพ
-      // นำ URL นี้ไปแสดงใน HTML โดยใช้ <img> หรือวิธีอื่น
-      const imgElement = document.createElement('img');
-      imgElement.src = dataURL;
-      document.body.appendChild(imgElement); // เพิ่มภาพลงใน DOM
-    });
+app.get('/getsdo', function (req, res, next) {
+  connection.query(
+  'SELECT * FROM `rsmsdo` ',
+    function(err, results, fields) {
+      res.json({results});
+      console.log(results); 
+      
+    }
+  );
   })
-  .catch(error => {
-    console.error('เกิดข้อผิดพลาดในการดึงข้อมูลภาพ:', error);
-  });
-
   app.get('/getpdcdc', function (req, res, next) {
     connection.query(
     'SELECT * FROM `rsmpdcdc` ',
