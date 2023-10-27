@@ -11,7 +11,7 @@ app.use(cors());
 const mysql = require('mysql2');
 require('dotenv').config(); // Load environment variables from .env file
 
-
+const upload = multer({ storage: storage });
 const connection = mysql.createConnection({
   connectionLimit: 10,
   host: process.env.DB_HOST,
@@ -99,19 +99,47 @@ app.get('/getsdo', function (req, res, next) {
         }
       );
       })
-app.post('/rsmsdo', jsonParser, function (req, res, next) {
-  connection.execute(
-      'INSERT INTO rsmsdo (name, passwordsell, problem, img) VALUES (?, ?, ?, ?)',
-      [req.body.name, req.body.passwordsell, req.body.problem, req.body.img],
-      function (err, results, fields) {
-        if (err) {
-          res.json({ status: 'error', message: 'แจ้งปัญหาไม่สำเร็จ' });
-          return;
-        }
-        res.json({ status: 'ok', message: 'แจ้งปัญหาสำเร็จ' });
-      }
-    );
+      
+const multer = require('multer'); // เรียกใช้ multer เพื่ออัปโหลดไฟล์
+const path = require('path');
+const fs = require('fs');
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // กำหนดโฟลเดอร์ที่จะเก็บไฟล์ที่อัปโหลด
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname)); // กำหนดชื่อไฟล์
+  }
 });
+app.post('/rsmsdo', upload.single('img'), function (req, res, next) {
+  const imgPath = req.file.path; // รับพาธไฟล์รูปภาพที่อัปโหลด
+  const imgLink = '/uploads/' + path.basename(imgPath); // สร้างลิงค์ไปยังไฟล์รูปภาพ
+
+  connection.execute(
+    'INSERT INTO rsmsdo (name, passwordsell, problem, img) VALUES (?, ?, ?, ?)',
+    [req.body.name, req.body.passwordsell, req.body.problem, imgLink],
+    function (err, results, fields) {
+      if (err) {
+        res.json({ status: 'error', message: 'แจ้งปัญหาไม่สำเร็จ' });
+        return;
+      }
+      res.json({ status: 'ok', message: 'แจ้งปัญหาสำเร็จ' });
+    }
+  );
+});
+// app.post('/rsmsdo', jsonParser, function (req, res, next) {
+//   connection.execute(
+//       'INSERT INTO rsmsdo (name, passwordsell, problem, img) VALUES (?, ?, ?, ?)',
+//       [req.body.name, req.body.passwordsell, req.body.problem, req.body.img],
+//       function (err, results, fields) {
+//         if (err) {
+//           res.json({ status: 'error', message: 'แจ้งปัญหาไม่สำเร็จ' });
+//           return;
+//         }
+//         res.json({ status: 'ok', message: 'แจ้งปัญหาสำเร็จ' });
+//       }
+//     );
+// });
 
 app.post('/rsmpdcdc', jsonParser, function (req, res, next) {
   connection.execute(
