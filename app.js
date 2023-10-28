@@ -10,38 +10,20 @@ const secret = 'login'
 app.use(cors());
 const mysql = require('mysql2');
 require('dotenv').config(); // Load environment variables from .env file
-
-const multer = require('multer'); // เรียกใช้ multer เพื่ออัปโหลดไฟล์
+const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
-const storage = multer.diskStorage({
+const imageStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/images/'); // กำหนดให้ไฟล์อัปโหลดเก็บในโฟลเดอร์ 'images'
+    cb(null, 'images/');
   },
   filename: (req, file, cb) => {
-    cb(null, file.originalname); // ใช้ชื่อเดิมของไฟล์
-  },
+    const ext = path.extname(file.originalname);
+    cb(null, Date.now() + ext);
+  }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage: imageStorage });
 
-app.post('/rsmsdo', upload.single('img'), function (req, res, next) {
-  const imgPath = req.file.path; 
-  const imgLink = '/uploads/images/' + path.basename(imgPath); // สร้างลิงค์ไปยังไฟล์รูปภาพในโฟลเดอร์ 'images'
-
-
-  connection.execute(
-    'INSERT INTO rsmsdo (name, passwordsell, problem) VALUES (?, ?, ?, ?)',
-    [req.body.name, req.body.passwordsell, req.body.problem, imgLink],
-    function (err, results, fields) {
-      if (err) {
-        res.json({ status: 'error', message: 'แจ้งปัญหาไม่สำเร็จ' });
-        return;
-      }
-      res.json({ status: 'ok', message: 'แจ้งปัญหาสำเร็จ' });
-    }
-  );
-});
 
 app.get('/sneakers', function (req, res, next) {
   connection.query(
@@ -132,7 +114,23 @@ const connection = mysql.createConnection({
   database: process.env.DB_DATABASE,
 });
 
+app.post('/rsmsdo', upload.single('image'), function (req, res, next) {
+  connection.execute(
+    'INSERT INTO rsmsdo (name, passwordsell, problem) VALUES (?, ?, ?)',
+    [req.body.name, req.body.passwordsell, req.body.problem],
+    function (err, results, fields) {
+      if (err) {
+        res.json({ status: 'error', message: 'แจ้งปัญหาไม่สำเร็จ' });
+        return;
+      }
+      res.json({ status: 'ok', message: 'แจ้งปัญหาสำเร็จ' });
+    }
+  );
+});
 
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
+});
 
 app.post('/rsmpdcdc', jsonParser, function (req, res, next) {
   connection.execute(
