@@ -22,7 +22,7 @@ const storage = multer.diskStorage({
     cb(null, file.originalname); // ใช้ชื่อเดิมของไฟล์
   },
 });
-
+//
 const upload = multer({ storage: storage });
 
 app.post('/rsmsdo', upload.single('img'), function (req, res, next) {
