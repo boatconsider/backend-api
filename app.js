@@ -22,15 +22,16 @@ const storage = multer.diskStorage({
     cb(null, file.originalname); // ใช้ชื่อเดิมของไฟล์
   },
 });
-//
+
 const upload = multer({ storage: storage });
 
 app.post('/rsmsdo', upload.single('img'), function (req, res, next) {
   const imgPath = req.file.path; 
   const imgLink = '/uploads/images/' + path.basename(imgPath); // สร้างลิงค์ไปยังไฟล์รูปภาพในโฟลเดอร์ 'images'
 
+
   connection.execute(
-    'INSERT INTO rsmsdo (name, passwordsell, problem, img) VALUES (?, ?, ?, ?)',
+    'INSERT INTO rsmsdo (name, passwordsell, problem) VALUES (?, ?, ?, ?)',
     [req.body.name, req.body.passwordsell, req.body.problem, imgLink],
     function (err, results, fields) {
       if (err) {
