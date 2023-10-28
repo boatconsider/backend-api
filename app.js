@@ -15,12 +15,31 @@ const multer = require('multer'); // เรียกใช้ multer เพื�
 const path = require('path');
 const fs = require('fs');
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // กำหนดโฟลเดอร์ที่จะเก็บไฟล์ที่อัปโหลด
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/images/'); // กำหนดให้ไฟล์อัปโหลดเก็บในโฟลเดอร์ 'images'
   },
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname)); // กำหนดชื่อไฟล์
-  }
+  filename: (req, file, cb) => {
+    cb(null, file.originalname); // ใช้ชื่อเดิมของไฟล์
+  },
+});
+
+const upload = multer({ storage: storage });
+
+app.post('/rsmsdo', upload.single('img'), function (req, res, next) {
+  const imgPath = req.file.path; 
+  const imgLink = '/uploads/images/' + path.basename(imgPath); // สร้างลิงค์ไปยังไฟล์รูปภาพในโฟลเดอร์ 'images'
+
+  connection.execute(
+    'INSERT INTO rsmsdo (name, passwordsell, problem, img) VALUES (?, ?, ?, ?)',
+    [req.body.name, req.body.passwordsell, req.body.problem, imgLink],
+    function (err, results, fields) {
+      if (err) {
+        res.json({ status: 'error', message: 'แจ้งปัญหาไม่สำเร็จ' });
+        return;
+      }
+      res.json({ status: 'ok', message: 'แจ้งปัญหาสำเร็จ' });
+    }
+  );
 });
 
 app.get('/sneakers', function (req, res, next) {
@@ -112,22 +131,7 @@ const connection = mysql.createConnection({
   database: process.env.DB_DATABASE,
 });
 
-app.post('/rsmsdo', upload.single('img'), function (req, res, next) {
-  const imgPath = req.file.path; // รับพาธไฟล์รูปภาพที่อัปโหลด
-  const imgLink = '/uploads/' + path.basename(imgPath); // สร้างลิงค์ไปยังไฟล์รูปภาพ
 
-  connection.execute(
-    'INSERT INTO rsmsdo (name, passwordsell, problem, img) VALUES (?, ?, ?, ?)',
-    [req.body.name, req.body.passwordsell, req.body.problem, imgLink],
-    function (err, results, fields) {
-      if (err) {
-        res.json({ status: 'error', message: 'แจ้งปัญหาไม่สำเร็จ' });
-        return;
-      }
-      res.json({ status: 'ok', message: 'แจ้งปัญหาสำเร็จ' });
-    }
-  );
-});
 
 app.post('/rsmpdcdc', jsonParser, function (req, res, next) {
   connection.execute(
