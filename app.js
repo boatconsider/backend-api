@@ -134,8 +134,8 @@ app.listen(3000, () => {
 
 app.post('/rsmpdcdc', jsonParser, function (req, res, next) {
   connection.execute(
-    'INSERT INTO rsmpdcdc (name, passwordsell, problem, img) VALUES (?, ?, ?, ?)',
-    [req.body.name, req.body.passwordsell, req.body.problem, req.body.img],
+    'INSERT INTO rsmpdcdc (name, passwordsell, problem, ) VALUES (?, ?, ?)',
+    [req.body.name, req.body.passwordsell, req.body.problem, ],
     function (err, results, fields) {
       if (err) {
         res.json({ status: 'error', message: 'แจ้งปัญหาไม่สำเร็จ' });
@@ -148,8 +148,8 @@ app.post('/rsmpdcdc', jsonParser, function (req, res, next) {
 
 app.post('/rsmvan', jsonParser, function (req, res, next) {
   connection.execute(
-    'INSERT INTO rsmvan (name, passwordsell, problem, img) VALUES (?, ?, ?, ?)',
-    [req.body.name, req.body.passwordsell, req.body.problem, req.body.img],
+    'INSERT INTO rsmvan (name, passwordsell, problem, img) VALUES (?, ?, ?)',
+    [req.body.name, req.body.passwordsell, req.body.problem],
     function (err, results, fields) {
       if (err) {
         res.json({ status: 'error', message: 'แจ้งปัญหาไม่สำเร็จ' });
