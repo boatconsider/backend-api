@@ -114,10 +114,10 @@ const connection = mysql.createConnection({
   database: process.env.DB_DATABASE,
 });
 
-app.post('/rsmsdo', upload.single('image'), function (req, res, next) {
+app.post('/rsmpfam', jsonParser, function (req, res, next) {
   connection.execute(
-    'INSERT INTO rsmsdo (name, passwordsell, problem) VALUES (?, ?, ?)',
-    [req.body.name, req.body.passwordsell, req.body.problem],
+    'INSERT INTO rsmfam (passsell, cardcode, cardname ,oldfam ,newfam ,problem) VALUES (?, ?, ? ,?, ?, ?)',
+    [req.body.passsell, req.body.cardcode, req.body.cardname ,req.body.oldfam, req.body.newfam, req.body.problem],
     function (err, results, fields) {
       if (err) {
         res.json({ status: 'error', message: 'แจ้งปัญหาไม่สำเร็จ' });
