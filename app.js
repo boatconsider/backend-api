@@ -76,9 +76,9 @@ app.post('/login', jsonParser, function (req, res, next) {
   );
 });
 
-app.get('/getsdo', function (req, res, next) {
+app.get('/getfam', function (req, res, next) {
   connection.query(
-    'SELECT * FROM `rsmsdo` ',
+    'SELECT * FROM `rsmfam` ',
     function (err, results, fields) {
       res.json({ results });
       console.log(results);
@@ -114,7 +114,7 @@ const connection = mysql.createConnection({
   database: process.env.DB_DATABASE,
 });
 
-app.post('/rsmpfam', jsonParser, function (req, res, next) {
+app.post('/rsmfam', jsonParser, function (req, res, next) {
   connection.execute(
     'INSERT INTO rsmfam (passsell, cardcode, cardname ,oldfam ,newfam ,problem) VALUES (?, ?, ? ,?, ?, ?)',
     [req.body.passsell, req.body.cardcode, req.body.cardname ,req.body.oldfam, req.body.newfam, req.body.problem],
