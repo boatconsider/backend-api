@@ -86,9 +86,9 @@ app.get('/getfam', function (req, res, next) {
   );
 });
 
-app.get('/getpdcdc', function (req, res, next) {
+app.get('/getdel', function (req, res, next) {
   connection.query(
-    'SELECT * FROM `rsmpdcdc` ',
+    'SELECT * FROM `rsmdel` ',
     function (err, results, fields) {
       res.json({ results });
       console.log(results);
@@ -96,9 +96,9 @@ app.get('/getpdcdc', function (req, res, next) {
   );
 });
 
-app.get('/getvan', function (req, res, next) {
+app.get('/getedit', function (req, res, next) {
   connection.query(
-    'SELECT * FROM `rsmvan` ',
+    'SELECT * FROM `rsmedit` ',
     function (err, results, fields) {
       res.json({ results });
       console.log(results);
@@ -132,10 +132,10 @@ app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });
 
-app.post('/rsmpdcdc', jsonParser, function (req, res, next) {
+app.post('/rsmdel', jsonParser, function (req, res, next) {
   connection.execute(
-    'INSERT INTO rsmpdcdc (name, passwordsell, problem, ) VALUES (?, ?, ?)',
-    [req.body.name, req.body.passwordsell, req.body.problem, ],
+    'INSERT INTO rsmdel (passsell, cardcode, cardname, problem ) VALUES (?, ?, ?,?)',
+    [req.body.passsell, req.body.cardcode, req.body.cardname,req.body.problem ],
     function (err, results, fields) {
       if (err) {
         res.json({ status: 'error', message: 'แจ้งปัญหาไม่สำเร็จ' });
@@ -146,10 +146,10 @@ app.post('/rsmpdcdc', jsonParser, function (req, res, next) {
   );
 });
 
-app.post('/rsmvan', jsonParser, function (req, res, next) {
+app.post('/rsmedit', jsonParser, function (req, res, next) {
   connection.execute(
-    'INSERT INTO rsmvan (name, passwordsell, problem, img) VALUES (?, ?, ?)',
-    [req.body.name, req.body.passwordsell, req.body.problem],
+    'INSERT INTO rsmedit (passsell, cardcode, cardname, newcardname	 , tax, problem ) VALUES (?, ?, ?,? , ?,?)',
+    [req.body.passsell, req.body.cardcode, req.body.cardname,req.body.newcardname ,req.body.tax, req.body.problem, ],
     function (err, results, fields) {
       if (err) {
         res.json({ status: 'error', message: 'แจ้งปัญหาไม่สำเร็จ' });
