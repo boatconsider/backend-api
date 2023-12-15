@@ -13,7 +13,9 @@ require('dotenv').config(); // Load environment variables from .env file
 const multer = require('multer');
 const path = require('path');
 const {notifyLine} =require('./functions/Notify')
-const tokenLine ='xLj4cutQPyghinxupFfP4r9XPvdZ7UKQluR7CWW3q7p'
+const tokenLine ='8oUoUpcHQbvA9Y5DtqLUvMomOA5uYQ2rkvDdpqxTy3G'
+const tokenLinecut ='w6nKwab4bioBPftEKeBWcoeZNxMkJ38OW2nVt6PVGwy'
+const tokenLineedit ='bxbwpQBi8RJ6bU0q7Vw5fqDX2di8eyw4pux9HKsPKOd'
 const imageStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'images/');
@@ -143,32 +145,50 @@ app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });
 
-app.post('/rsmdel', jsonParser, function (req, res, next) {
+app.post('/rsmdel', jsonParser, async function (req, res, next) {
   connection.execute(
-    'INSERT INTO rsmdel (passsell, cardcode, cardname, problem ) VALUES (?, ?, ?,?)',
-    [req.body.passsell, req.body.cardcode, req.body.cardname,req.body.problem ],
-    function (err, results, fields) {
+    'INSERT INTO rsmdel (passsell, cardcode, cardname, problem) VALUES (?, ?, ?, ?)',
+    [req.body.passsell, req.body.cardcode, req.body.cardname, req.body.problem],
+    async function (err, results, fields) {
       if (err) {
         res.json({ status: 'error', message: 'แจ้งปัญหาไม่สำเร็จ' });
-     
         return;
       }
-      res.json({ status: 'ok', message: 'แจ้งปัญหาสำเร็จ' });
-    
+
+      // หากการเพิ่มข้อมูลเข้าฐานข้อมูลสำเร็จ ให้ทำการส่ง Line Notify
+      const message = `แจ้งปัญหาใหม่:\nPasssell: ${req.body.passsell}\nCardcode: ${req.body.cardcode}\nCardname: ${req.body.cardname}\nProblem: ${req.body.problem}`;
+      
+      try {
+        await notifyLine(tokenLinecut, message);
+        res.json({ status: 'ok', message: 'แจ้งปัญหาสำเร็จ' });
+      } catch (notifyError) {
+        console.error('Line Notify error:', notifyError);
+        res.json({ status: 'ok', message: 'แจ้งปัญหาสำเร็จ แต่มีปัญหาในการส่ง Line Notify' });
+      }
     }
   );
 });
 
-app.post('/rsmedit', jsonParser, function (req, res, next) {
+app.post('/rsmedit', jsonParser, async function (req, res, next) {
   connection.execute(
-    'INSERT INTO rsmedit (passsell, cardcode, cardname, newcardname	 , tax, problem ) VALUES (?, ?, ?,? , ?,?)',
-    [req.body.passsell, req.body.cardcode, req.body.cardname,req.body.newcardname ,req.body.tax, req.body.problem, ],
-    function (err, results, fields) {
+    'INSERT INTO rsmedit (passsell, cardcode, cardname, newcardname, tax, problem) VALUES (?, ?, ?, ?, ?, ?)',
+    [req.body.passsell, req.body.cardcode, req.body.cardname, req.body.newcardname, req.body.tax, req.body.problem],
+    async function (err, results, fields) {
       if (err) {
         res.json({ status: 'error', message: 'แจ้งปัญหาไม่สำเร็จ' });
         return;
       }
-      res.json({ status: 'ok', message: 'แจ้งปัญหาสำเร็จ' });
+
+      // หากการเพิ่มข้อมูลเข้าฐานข้อมูลสำเร็จ ให้ทำการส่ง Line Notify
+      const message = `แจ้งปัญหาใหม่:\nPasssell: ${req.body.passsell}\nCardcode: ${req.body.cardcode}\nCardname: ${req.body.cardname}\nNewcardname: ${req.body.newcardname}\nTax: ${req.body.tax}\nProblem: ${req.body.problem}`;
+      
+      try {
+        await notifyLine(tokenLineedit, message);
+        res.json({ status: 'ok', message: 'แจ้งปัญหาสำเร็จ' });
+      } catch (notifyError) {
+        console.error('Line Notify error:', notifyError);
+        res.json({ status: 'ok', message: 'แจ้งปัญหาสำเร็จ แต่มีปัญหาในการส่ง Line Notify' });
+      }
     }
   );
 });
