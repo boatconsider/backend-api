@@ -11,6 +11,8 @@ app.use(cors());
 const mysql = require('mysql2');
 require('dotenv').config(); // Load environment variables from .env file
 const multer = require('multer');
+const notifier = require('node-notifier');
+const axios = require('axios');
 const path = require('path');
 const imageStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -114,19 +116,52 @@ const connection = mysql.createConnection({
   database: process.env.DB_DATABASE,
 });
 
-app.post('/rsmfam', jsonParser, function (req, res, next) {
+app.post('/rsmfam', jsonParser, async function (req, res, next) {
   connection.execute(
-    'INSERT INTO rsmfam (passsell, cardcode, cardname ,oldfam ,newfam ,problem) VALUES (?, ?, ? ,?, ?, ?)',
-    [req.body.passsell, req.body.cardcode, req.body.cardname ,req.body.oldfam, req.body.newfam, req.body.problem],
-    function (err, results, fields) {
+    'INSERT INTO rsmfam (passsell, cardcode, cardname, oldfam, newfam, problem) VALUES (?, ?, ? ,?, ?, ?)',
+    [req.body.passsell, req.body.cardcode, req.body.cardname, req.body.oldfam, req.body.newfam, req.body.problem],
+    async function (err, results, fields) {
       if (err) {
         res.json({ status: 'error', message: 'แจ้งปัญหาไม่สำเร็จ' });
         return;
       }
+
+      // Send notification with information about the inserted data
+      await sendNotification(req.body);
+
       res.json({ status: 'ok', message: 'แจ้งปัญหาสำเร็จ' });
     }
   );
 });
+
+async function sendNotification(data) {
+  const LINE_NOTIFY_TOKEN = 'myitbwuYf49Tjxpr0yu1ys9PQkqqOalz8P7Wiw0dBAK'; // Replace with your actual LINE Notify token
+
+  // Customize the notification message using the inserted data
+  const message = `Data inserted:\n` +
+    `Passsell: ${data.passsell}\n` +
+    `Cardcode: ${data.cardcode}\n` +
+    `Cardname: ${data.cardname}\n` +
+    `Oldfam: ${data.oldfam}\n` +
+    `Newfam: ${data.newfam}\n` +
+    `Problem: ${data.problem}`;
+
+  try {
+    await axios.post(
+      'https://notify-api.line.me/api/notify',
+      `message=${message}`,
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': `Bearer ${myitbwuYf49Tjxpr0yu1ys9PQkqqOalz8P7Wiw0dBAK}`,
+        },
+      }
+    );
+    console.log('Notification sent successfully');
+  } catch (error) {
+    console.error('Error sending notification:', error.message);
+  }
+}
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
