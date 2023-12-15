@@ -12,8 +12,8 @@ const mysql = require('mysql2');
 require('dotenv').config(); // Load environment variables from .env file
 const multer = require('multer');
 const path = require('path');
-
-const lineNotify = require('line-notify-nodejs')('uZej3dXfkJDyj3pa3GT04G6QLfmJaDeaoy2X1ui3YRv');
+const {notifyLine} =require('./functions/Notify')
+const tokenLine ='xLj4cutQPyghinxupFfP4r9XPvdZ7UKQluR7CWW3q7p'
 const imageStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'images/');
@@ -115,48 +115,33 @@ const connection = mysql.createConnection({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
 });
-
 app.post('/rsmfam', jsonParser, function (req, res, next) {
   connection.execute(
-    'INSERT INTO rsmfam (passsell, cardcode, cardname, oldfam, newfam, problem) VALUES (?, ?, ? ,?, ?, ?)',
+    'INSERT INTO rsmfam (passsell, cardcode, cardname, oldfam, newfam, problem) VALUES (?, ?, ?, ?, ?, ?)',
     [req.body.passsell, req.body.cardcode, req.body.cardname, req.body.oldfam, req.body.newfam, req.body.problem],
-    function (err, results, fields) {
+    async function (err, results, fields) {
       if (err) {
         res.json({ status: 'error', message: 'แจ้งปัญหาไม่สำเร็จ' });
-
-        // Create an instance of the lineNotify class
-        const notifier = new lineNotify();
-        
-        // Replace 'your_line_notify_token' with your actual LINE Notify token
-        const LINE_NOTIFY_TOKEN = 'uZej3dXfkJDyj3pa3GT04G6QLfmJaDeaoy2X1ui3YRv';
-
-        // Construct an error message with the data
-        const errorMessage = `Error in data insertion:\n` +
-          `Passsell: ${req.body.passsell}\n` +
-          `Cardcode: ${req.body.cardcode}\n` +
-          `Cardname: ${req.body.cardname}\n` +
-          `Oldfam: ${req.body.oldfam}\n` +
-          `Newfam: ${req.body.newfam}\n` +
-          `Problem: ${req.body.problem}\n` +
-          `Error Message: ${err.message}`;
-
-        // Send LINE Notify with the error message
-        notifier.notify({
-          message: errorMessage,
-        }, LINE_NOTIFY_TOKEN).then(() => {
-          console.log('LINE Notify sent for error!');
-        });
-
         return;
       }
-      res.json({ status: 'ok', message: 'แจ้งปัญหาสำเร็จ' });
+
+      // หากการเพิ่มข้อมูลเข้าฐานข้อมูลสำเร็จ ให้ทำการส่ง Line Notify
+      const message = `แจ้งปัญหาใหม่:\nPasssell: ${req.body.passsell}\nCardcode: ${req.body.cardcode}\nCardname: ${req.body.cardname}\nOldfam: ${req.body.oldfam}\nNewfam: ${req.body.newfam}\nProblem: ${req.body.problem}`;
+      
+      try {
+        await notifyLine(tokenLine, message);
+        res.json({ status: 'ok', message: 'แจ้งปัญหาสำเร็จ' });
+      } catch (notifyError) {
+        console.error('Line Notify error:', notifyError);
+        res.json({ status: 'ok', message: 'แจ้งปัญหาสำเร็จ แต่มีปัญหาในการส่ง Line Notify' });
+      }
     }
   );
 });
+
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });
-
 
 app.post('/rsmdel', jsonParser, function (req, res, next) {
   connection.execute(
@@ -165,9 +150,11 @@ app.post('/rsmdel', jsonParser, function (req, res, next) {
     function (err, results, fields) {
       if (err) {
         res.json({ status: 'error', message: 'แจ้งปัญหาไม่สำเร็จ' });
+     
         return;
       }
       res.json({ status: 'ok', message: 'แจ้งปัญหาสำเร็จ' });
+    
     }
   );
 });
