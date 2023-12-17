@@ -128,7 +128,7 @@ app.post('/rsmfam', jsonParser, function (req, res, next) {
       }
 
       // หากการเพิ่มข้อมูลเข้าฐานข้อมูลสำเร็จ ให้ทำการส่ง Line Notify
-      const message = `แจ้งปัญหาใหม่:\nPasssell: ${req.body.passsell}\nCardcode: ${req.body.cardcode}\nCardname: ${req.body.cardname}\nOldfam: ${req.body.oldfam}\nNewfam: ${req.body.newfam}\nProblem: ${req.body.problem}`;
+      const message = `แจ้งย้ายแฟ้ม\nPasssell: ${req.body.passsell}\nCardcode: ${req.body.cardcode}\nCardname: ${req.body.cardname}\nOldfam: ${req.body.oldfam}\nNewfam: ${req.body.newfam}\nProblem: ${req.body.problem}`;
       
       try {
         await notifyLine(tokenLine, message);
@@ -156,7 +156,7 @@ app.post('/rsmdel', jsonParser, async function (req, res, next) {
       }
 
       // หากการเพิ่มข้อมูลเข้าฐานข้อมูลสำเร็จ ให้ทำการส่ง Line Notify
-      const message = `แจ้งปัญหาใหม่:\nPasssell: ${req.body.passsell}\nCardcode: ${req.body.cardcode}\nCardname: ${req.body.cardname}\nProblem: ${req.body.problem}`;
+      const message = `แจ้งตัดร้าน\nPasssell: ${req.body.passsell}\nCardcode: ${req.body.cardcode}\nCardname: ${req.body.cardname}\nProblem: ${req.body.problem}`;
       
       try {
         await notifyLine(tokenLinecut, message);
@@ -180,7 +180,7 @@ app.post('/rsmedit', jsonParser, async function (req, res, next) {
       }
 
       // หากการเพิ่มข้อมูลเข้าฐานข้อมูลสำเร็จ ให้ทำการส่ง Line Notify
-      const message = `แจ้งปัญหาใหม่:\nPasssell: ${req.body.passsell}\nCardcode: ${req.body.cardcode}\nCardname: ${req.body.cardname}\nNewcardname: ${req.body.newcardname}\nTax: ${req.body.tax}\nProblem: ${req.body.problem}`;
+      const message = `แจ้งแก้ไขแฟ้ม\nPasssell: ${req.body.passsell}\nCardcode: ${req.body.cardcode}\nCardname: ${req.body.cardname}\nNewcardname: ${req.body.newcardname}\nTax: ${req.body.tax}\nProblem: ${req.body.problem}`;
       
       try {
         await notifyLine(tokenLineedit, message);
