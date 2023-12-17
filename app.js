@@ -180,7 +180,7 @@ app.post('/rsmedit', jsonParser, async function (req, res, next) {
       }
 
       // หากการเพิ่มข้อมูลเข้าฐานข้อมูลสำเร็จ ให้ทำการส่ง Line Notify
-      const message = `แจ้งแก้ไขแฟ้ม\nPasssell: ${req.body.passsell}\nCardcode: ${req.body.cardcode}\nCardname: ${req.body.cardname}\nNewcardname: ${req.body.newcardname}\nTax: ${req.body.tax}\nProblem: ${req.body.problem}`;
+      const message = `แจ้งแก้ไขชื่อร้านและเลขที่เสียภาษี\nPasssell: ${req.body.passsell}\nCardcode: ${req.body.cardcode}\nCardname: ${req.body.cardname}\nNewcardname: ${req.body.newcardname}\nTax: ${req.body.tax}\nProblem: ${req.body.problem}`;
       
       try {
         await notifyLine(tokenLineedit, message);
